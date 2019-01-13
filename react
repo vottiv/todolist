@@ -1,6 +1,4 @@
 import * as React from "react";
-import VerstkaExample from "../TestFolder/verstka-example";
-import { arrayMove, SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 
 export default class ToDoList extends React.Component<InputFieldProps, InputFieldState> {
 
@@ -40,6 +38,18 @@ export default class ToDoList extends React.Component<InputFieldProps, InputFiel
         }
     };
 
+    deleteTask = () => {
+        const items = [
+            {id: 0, title: 'Задача 1', completed: false, readonly: true},
+            {id: 1, title: 'Задача 2', completed: false, readonly: true},
+        ];
+        this.setState({
+            items: items
+        });
+        //alert(1);
+        console.log(1);
+    };
+
     render() {
         return (
             <React.Fragment>
@@ -54,7 +64,7 @@ export default class ToDoList extends React.Component<InputFieldProps, InputFiel
                                         <button className="btn btn-outline-secondary" onClick={this.onSubmit} type="button">Добавить</button>
                                     </div>
                                 </form>
-                                <ListTask data={this.state.items}/>
+                                <ListTask items={this.state.items} deleteTask={this.deleteTask}/>
                             </div>
                         </div>
                     </div>
@@ -69,10 +79,15 @@ class ListTask extends React.Component<ListTaskProps, ListTaskState> {
 
     render() {
 
+        this.props.items.map((item: any , index: number) => {
+            console.log(item);
+            console.log(index);
+        });
+
         return(
             <React.Fragment>
-                {this.props.data.map((item: any , index: any) => (
-                    <ItemTask item={item} key={index}/>
+                {this.props.items.map((item: any , index: number) => (
+                    <ItemTask item={item} key={index} deleteTask={this.props.deleteTask}/>
                 ))}
             </React.Fragment>
 
@@ -83,14 +98,9 @@ class ListTask extends React.Component<ListTaskProps, ListTaskState> {
 
 class ItemTask extends React.Component<ItemTaskProps, ItemTaskState> {
 
-   deleteHandler = (key: any) => {
-      // удаляем как-то
-   };
-
    render() {
 
         const item = this.props.item;
-
         return (
             <React.Fragment>
             <div className="list-group__item">
@@ -113,12 +123,12 @@ class ItemTask extends React.Component<ItemTaskProps, ItemTaskState> {
                             </button>
                         </div>
                         <div className="btn-group__icon">
-                            <button className="btn-group__edit" >
+                            <button className="btn-group__edit" onClick={this.props.deleteTask}>
                                 <i className="far fa-edit" />
                             </button>
                         </div>
                         <div className="btn-group__icon">
-                            <button onClick={this.deleteHandler.bind(this)} type="button" className="close" data-dismiss="alert" aria-label="Close">
+                            <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -133,13 +143,17 @@ class ItemTask extends React.Component<ItemTaskProps, ItemTaskState> {
 }
 
 interface ListTaskProps {
-    data: any;
+    items: any;
+    deleteTask: any;
 }
 interface ListTaskState {
     items: any;
+
 }
 interface ItemTaskProps {
     item: any;
+    key: number;
+    deleteTask: any;
 }
 interface ItemTaskState{
     item: any;
